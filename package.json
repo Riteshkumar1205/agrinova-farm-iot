@@ -1,0 +1,38 @@
+{
+  "name": "agrinova-farmer-pro",
+  "version": "2.0.0",
+  "description": "Complete Smart Crop Advisory System for Small Farmers with IoT Integration",
+  "main": "server/server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "nodemon server/server.js",
+    "client": "live-server --port=5500 --open=public/index.html --watch=public,css,js",
+    "install-client": "npm install",
+    "build": "node scripts/build.js",
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "socket.io": "^4.9.1",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.2",
+    "node-cron": "^3.0.3",
+    "mqtt": "^5.3.4",
+    "mongodb": "^6.3.0",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.33.2",
+    "nodemailer": "^6.9.8",
+    "twilio": "^4.19.3",
+    "winston": "^3.11.0",
+    "helmet": "^7.1.0",
+    "rate-limiter-flexible": "^5.0.3"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "nodemon": "^3.0.2",
+    "concurrently": "^8.2.2"
+  },
+  "keywords": ["agriculture", "iot", "smart-farming", "crop-advisory", "weather", "disease-detection"],
+  "author": "AGRINOVA Team",
+  "license": "MIT"
+}
