@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AGRINOVA Pro - Smart Farming Dashboard</title>
+  <link rel="stylesheet" href="../css/enhanced-style.css" />
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#2b9348">
+</head>
+<body>
+  <div id="app">
+    <!-- Enhanced Header with Status Indicators -->
+    <header class="topbar">
+      <div class="left">
+        <h1 id="welcomeText">🌾 AGRINOVA Pro</h1>
+        <div id="quote" class="quote">Smart IoT-enabled farming advisory</div>
+      </div>
+      <div class="center">
+        <div class="status-indicators">
+          <div id="iotStatus" class="status-dot offline" title="IoT Connection"></div>
+          <div id="weatherStatus" class="status-dot offline" title="Weather API"></div>
+          <div id="alertStatus" class="status-dot" title="Active Alerts">0</div>
+        </div>
+      </div>
+      <div class="right">
+        <select id="languageSelect" aria-label="Select language">
+          <option value="en">English</option>
+          <option value="hi">हिंदी</option>
+          <option value="te">తెలుగు</option>
+          <option value="ta">தமிழ்</option>
+        </select>
+        <button id="alertsBtn" class="alert-btn">🔔 <span id="alertCount">0</span></button>
+      </div>
+    </header>
+
+    <!-- Alert Panel -->
+    <div id="alertPanel" class="alert-panel hidden">
+      <div class="alert-header">
+        <h3>Recent Alerts</h3>
+        <button id="closeAlerts">×</button>
+      </div>
+      <div id="alertList" class="alert-list">
+        <p>No active alerts</p>
+      </div>
+    </div>
+
+    <!-- Main Dashboard Grid -->
+    <main class="dashboard-container">
+      <!-- Real-time Weather Section -->
+      <section id="weatherSection" class="card large-card">
+        <h2>🌤️ Weather Station</h2>
+        <div class="weather-grid">
+          <div class="weather-current">
+            <div class="temp-display">--°C</div>
+            <div class="weather-desc">Loading...</div>
+          </div>
+          <div class="weather-details">
+            <div class="detail-item">
+              <span>Humidity:</span> <span id="humidity">--%</span>
+            </div>
+            <div class="detail-item">
+              <span>Wind:</span> <span id="windSpeed">-- km/h</span>
+            </div>
+            <div class="detail-item">
+              <span>Pressure:</span> <span id="pressure">-- hPa</span>
+            </div>
+            <div class="detail-item">
+              <span>UV Index:</span> <span id="uvIndex">--</span>
+            </div>
+          </div>
+        </div>
+        <div class="weather-forecast" id="weatherForecast">
+          <!-- 5-day forecast will be populated here -->
+        </div>
+      </section>
+
+      <!-- IoT Sensor Dashboard -->
+      <section id="iotSection" class="card large-card">
+        <h2>📡 IoT Sensors</h2>
+        <div class="iot-grid">
+          <div class="sensor-group">
+            <h3>Soil Monitoring</h3>
+            <div class="sensor-item">
+              <span class="sensor-label">Moisture:</span>
+              <div class="progress-bar">
+                <div id="moistureBar" class="progress-fill" style="width: 0%"></div>
+              </div>
+              <span id="moistureValue">--%</span>
+            </div>
+            <div class="sensor-item">
+              <span class="sensor-label">pH Level:</span>
+              <span id="phValue" class="sensor-value">--</span>
+            </div>
+            <div class="sensor-item">
+              <span class="sensor-label">Temperature:</span>
+              <span id="soilTemp" class="sensor-value">--°C</span>
+            </div>
+          </div>
+          
+          <div class="sensor-group">
+            <h3>Nutrients (NPK)</h3>
+            <div class="nutrient-bars">
+              <div class="nutrient-item">
+                <span>N:</span>
+                <div class="nutrient-bar">
+                  <div id="nitrogenBar" class="nutrient-fill" style="width: 0%"></div>
+                </div>
+                <span id="nitrogenValue">--</span>
+              </div>
+              <div class="nutrient-item">
+                <span>P:</span>
+                <div class="nutrient-bar">
+                  <div id="phosphorusBar" class="nutrient-fill" style="width: 0%"></div>
+                </div>
+                <span id="phosphorusValue">--</span>
+              </div>
+              <div class="nutrient-item">
+                <span>K:</span>
+                <div class="nutrient-bar">
+                  <div id="potassiumBar" class="nutrient-fill" style="width: 0%"></div>
+                </div>
+                <span id="potassiumValue">--</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Device Controls -->
+        <div class="device-controls">
+          <h3>Device Controls</h3>
+          <div class="control-buttons">
+            <button id="irrigationBtn" class="control-btn">💧 Irrigation</button>
+            <button id="fertilizerBtn" class="control-btn">🌱 Fertilizer</button>
+            <button id="pestBtn" class="control-btn">🛡️ Pest Control</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Smart Advisory System -->
+      <section id="advisorySection" class="card">
+        <h2>🧠 Smart Advisory</h2>
+        <div id="advisoryList" class="advisory-list">
+          <p>Analyzing farm conditions...</p>
+        </div>
+      </section>
+
+      <!-- Market Intelligence -->
+      <section id="marketSection" class="card">
+        <h2>📊 Market Intelligence</h2>
+        <div id="marketPrices" class="market-list">
+          <p>Fetching latest prices...</p>
+        </div>
+        <div class="market-trends">
+          <canvas id="priceChart" width="300" height="150"></canvas>
+        </div>
+      </section>
+
+      <!-- Crop Health Analysis -->
+      <section id="diseaseSection" class="card">
+        <h2>🔬 Crop Health Analysis</h2>
+        <div class="upload-area">
+          <input id="leafUpload" type="file" accept="image/*" style="display: none;">
+          <button id="uploadBtn" class="upload-btn">📷 Upload Crop Image</button>
+          <div id="cameraCapture" class="camera-section">
+            <video id="cameraFeed" width="300" height="200" style="display: none;"></video>
+            <canvas id="captureCanvas" width="300" height="200" style="display: none;"></canvas>
+            <button id="cameraBtn" class="control-btn">📹 Use Camera</button>
+            <button id="captureBtn" class="control-btn" style="display: none;">📸 Capture</button>
+          </div>
+        </div>
+        <div id="analysisResults" class="analysis-results">
+          <!-- AI analysis results will appear here -->
+        </div>
+      </section>
+
+      <!-- Voice Assistant -->
+      <section id="voiceSection" class="card">
+        <h2>🎤 Voice Assistant</h2>
+        <div class="voice-controls">
+          <button id="voiceBtn" class="voice-btn">
+            <span class="voice-icon">🎙️</span>
+            <span>Ask AGRINOVA</span>
+          </button>
+          <div id="voiceStatus" class="voice-status">Ready to listen</div>
+        </div>
+        <div id="voiceOutput" class="voice-output">
+          <!-- Voice interaction history -->
+        </div>
+      </section>
+
+      <!-- Farm Statistics -->
+      <section id="statsSection" class="card">
+        <h2>📈 Farm Statistics</h2>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value" id="dailyWaterUsage">-- L</div>
+            <div class="stat-label">Daily Water Usage</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="monthlyYield">-- kg</div>
+            <div class="stat-label">Monthly Yield</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="efficiency">--%</div>
+            <div class="stat-label">Farm Efficiency</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Irrigation Schedule -->
+      <section id="scheduleSection" class="card">
+        <h2>💧 Smart Irrigation</h2>
+        <div class="schedule-controls">
+          <div class="schedule-item">
+            <label>Auto Mode:</label>
+            <label class="switch">
+              <input type="checkbox" id="autoIrrigation">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="next-irrigation">
+            <strong>Next Irrigation:</strong>
+            <span id="nextIrrigationTime">Based on soil moisture</span>
+          </div>
+        </div>
+        <div class="irrigation-history">
+          <h4>Recent Irrigation</h4>
+          <div id="irrigationLog" class="log-list">
+            <!-- Irrigation history will be populated -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>AGRINOVA Pro</h4>
+          <p>AI-Powered Smart Farming</p>
+        </div>
+        <div class="footer-section">
+          <h4>Features</h4>
+          <ul>
+            <li>Real-time IoT monitoring</li>
+            <li>Weather forecasting</li>
+            <li>Market intelligence</li>
+            <li>Crop disease detection</li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <p>24/7 Farmer Helpline: <strong>1800-XXX-FARM</strong></p>
+          <p>Email: support@agrinova.com</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <small>&copy; 2025 AGRINOVA Pro - Empowering Smart Farmers</small>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="../js/enhanced-dashboard.js"></script>
+</body>
+</html>
